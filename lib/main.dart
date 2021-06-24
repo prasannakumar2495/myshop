@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myshop/screens/products_overview_screen.dart';
+import './screens/product_detail_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -17,6 +18,12 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Lato',
       ),
       home: ProductsOverviewScreen(),
+      /*
+      below we mention all the route to pass data from any screen to any screen.
+      */
+      routes: {
+        ProductDetailsScreen.routeName: (ctx) => ProductDetailsScreen(),
+      },
     );
   }
 }
