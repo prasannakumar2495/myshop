@@ -28,6 +28,7 @@ class MyApp extends StatelessWidget {
         home: ProductsOverviewScreen(),
         /*
         below we mention all the route to pass data from any screen to any screen.
+        the 'ctx' used in the create method is used here.
         */
         routes: {
           ProductDetailsScreen.routeName: (ctx) => ProductDetailsScreen(),
