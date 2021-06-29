@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
     /* this is provided by the provider package.
     so, when ever there is change, only the child widgets that have change will get re-build, but not the entire application.*/
     return ChangeNotifierProvider(
-      /* the provider version in the dependencies is higher than 3, then use "create".*/
+      /* if the provider version in the dependencies is higher than 3, then use "create".*/
       create: (ctx) => Products(),
       child: MaterialApp(
         title: 'MyShop',

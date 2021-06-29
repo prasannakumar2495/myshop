@@ -9,12 +9,14 @@ class ProductsGrid extends StatelessWidget {
     /*we are informing the provider, to notify when the changed data type is "Products".*/
     final productsData = Provider.of<Products>(context);
     final products = productsData.items;
+    print(products.length);
     return GridView.builder(
       padding: const EdgeInsets.all(
         10,
       ),
       /* the number of items that will be created, based on the leght of the loadedproducts. */
       itemCount: products.length,
+      //the below is used to repeat 'itemCount' times.
       itemBuilder: (ctx, i) => ProductItem(
         products[i].id,
         products[i].title,
