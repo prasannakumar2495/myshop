@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:myshop/providers/product.dart';
 import 'package:myshop/screens/product_detail_screen.dart';
+import 'package:provider/provider.dart';
 
 class ProductItem extends StatelessWidget {
-  final String id;
+  /*final String id;
   final String title;
   final String imageUrl;
 
@@ -10,11 +12,15 @@ class ProductItem extends StatelessWidget {
     this.id,
     this.title,
     this.imageUrl,
-  );
+  );*/
 
   @override
   Widget build(BuildContext context) {
-    //we have wrapped gridtile with clipRrect to add the borderradius.
+    /* We have wrapped gridtile with clipRrect to add the borderradius.
+    we can set listen: false, to not let the notifier to send the update. */
+    final product = Provider.of<Product>(
+      context,
+    );
     return ClipRRect(
       borderRadius: BorderRadius.circular(
         10,
@@ -32,11 +38,11 @@ class ProductItem extends StatelessWidget {
             );*/
             Navigator.of(context).pushNamed(
               ProductDetailsScreen.routeName,
-              arguments: id,
+              arguments: product.id,
             );
           },
           child: Image.network(
-            imageUrl,
+            product.imageUrl,
             fit: BoxFit.cover,
           ),
         ),
@@ -44,13 +50,15 @@ class ProductItem extends StatelessWidget {
           backgroundColor: Colors.black87,
           leading: IconButton(
             icon: Icon(
-              Icons.favorite,
+              product.isFavorite ? Icons.favorite : Icons.favorite_border,
             ),
-            onPressed: () {},
+            onPressed: () {
+              product.toggleFavoriteStatus();
+            },
             color: Theme.of(context).accentColor,
           ),
           title: Text(
-            title,
+            product.title,
             textAlign: TextAlign.center,
           ),
           trailing: IconButton(

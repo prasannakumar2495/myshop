@@ -19,10 +19,13 @@ class ProductsGrid extends StatelessWidget {
       itemCount: products.length,
       /* the below is used to repeat 'itemCount' times.
         we are passing the data in to the ProductsItem class. */
-      itemBuilder: (ctx, i) => ProductItem(
-        products[i].id,
-        products[i].title,
-        products[i].imageUrl,
+      itemBuilder: (ctx, i) => ChangeNotifierProvider(
+        create: (context) => products[i],
+        child: ProductItem(
+            /*products[i].id,
+          products[i].title,
+          products[i].imageUrl, */
+            ),
       ),
       /* the below will define the structure of the grid. */
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
