@@ -18,55 +18,60 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     /* We have wrapped gridtile with clipRrect to add the borderradius.
     we can set listen: false, to not let the notifier to send the update. */
-    final product = Provider.of<Product>(
-      context,
+    /*final product = Provider.of<Product>(
+      context,listen = false,
     );
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(
-        10,
-      ),
-      child: GridTile(
-        /* No need to add a button, we can directly click on anything and move to relative page with this. */
-        child: GestureDetector(
-          onTap: () {
-            /*Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (ctx) => ProductDetailsScreen(
-                  title,
-                ),
-              ),
-            );*/
-            Navigator.of(context).pushNamed(
-              ProductDetailsScreen.routeName,
-              arguments: product.id,
-            );
-          },
-          child: Image.network(
-            product.imageUrl,
-            fit: BoxFit.cover,
-          ),
+    we are using Consumer, instead of provider.of method. 
+    by using the Consumer, the widget will get all the updates.
+    if the user want only sub widget to get the updates, the we use the provider.of , method and surround that sub-widget with Consumer instead of  the entire screen.*/
+    return Consumer<Product>(
+      builder: (ctx, product, child) => ClipRRect(
+        borderRadius: BorderRadius.circular(
+          10,
         ),
-        footer: GridTileBar(
-          backgroundColor: Colors.black87,
-          leading: IconButton(
-            icon: Icon(
-              product.isFavorite ? Icons.favorite : Icons.favorite_border,
-            ),
-            onPressed: () {
-              product.toggleFavoriteStatus();
+        child: GridTile(
+          /* No need to add a button, we can directly click on anything and move to relative page with this. */
+          child: GestureDetector(
+            onTap: () {
+              /*Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (ctx) => ProductDetailsScreen(
+                    title,
+                  ),
+                ),
+              );*/
+              Navigator.of(context).pushNamed(
+                ProductDetailsScreen.routeName,
+                arguments: product.id,
+              );
             },
-            color: Theme.of(context).accentColor,
-          ),
-          title: Text(
-            product.title,
-            textAlign: TextAlign.center,
-          ),
-          trailing: IconButton(
-            onPressed: () {},
-            icon: Icon(
-              Icons.shopping_cart,
+            child: Image.network(
+              product.imageUrl,
+              fit: BoxFit.cover,
             ),
-            color: Theme.of(context).accentColor,
+          ),
+          footer: GridTileBar(
+            backgroundColor: Colors.black87,
+            leading: IconButton(
+              icon: Icon(
+                product.isFavorite ? Icons.favorite : Icons.favorite_border,
+              ),
+              onPressed: () {
+                product.toggleFavoriteStatus();
+              },
+              color: Theme.of(context).accentColor,
+            ),
+            title: Text(
+              product.title,
+              textAlign: TextAlign.center,
+            ),
+            trailing: IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.shopping_cart,
+              ),
+              color: Theme.of(context).accentColor,
+            ),
           ),
         ),
       ),

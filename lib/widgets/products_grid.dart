@@ -19,8 +19,9 @@ class ProductsGrid extends StatelessWidget {
       itemCount: products.length,
       /* the below is used to repeat 'itemCount' times.
         we are passing the data in to the ProductsItem class. */
-      itemBuilder: (ctx, i) => ChangeNotifierProvider(
-        create: (context) => products[i],
+      itemBuilder: (ctx, i) => ChangeNotifierProvider.value(
+        //create: (context) => products[i], below is just the alternate
+        value: products[i],
         child: ProductItem(
             /*products[i].id,
           products[i].title,
