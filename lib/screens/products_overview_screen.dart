@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:myshop/providers/cart.dart';
 import 'package:myshop/providers/products.dart';
+import 'package:myshop/widgets/badge.dart';
 import 'package:provider/provider.dart';
 import '../widgets/products_grid.dart';
 
@@ -10,6 +12,9 @@ enum FilterOptions {
 }
 
 class ProductsOverviewScreen extends StatelessWidget {
+  /* we can also use statefull. 
+  if we do it using provider, it is local state, but if we use statefull it is call app-state.
+  there will be no impact on the performance, we can use any method. */
   @override
   Widget build(BuildContext context) {
     final productsContainer = Provider.of<Products>(
@@ -48,7 +53,19 @@ class ProductsOverviewScreen extends StatelessWidget {
             icon: Icon(
               Icons.more_vert,
             ),
-          )
+          ),
+          Consumer<Cart>(
+            builder: (_, cart, ch) => Badge(
+              child: ch,
+              value: cart.itemCount.toString(),
+            ),
+            child: IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.shopping_cart,
+              ),
+            ),
+          ),
         ],
       ),
       body: ProductsGrid(),

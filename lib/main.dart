@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myshop/providers/cart.dart';
 import 'package:provider/provider.dart';
 
 import 'package:myshop/screens/products_overview_screen.dart';
@@ -14,10 +15,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     /* this is provided by the provider package.
-    so, when ever there is change, only the child widgets that have change will get re-build, but not the entire application.*/
-    return ChangeNotifierProvider(
+    so, when ever there is change, only the child widgets that have change will get re-build, but not the entire application.
+    we can also use data in any class that has been passed in the create, in any other class. */
+    return MultiProvider(
+      /* we can either use single ChangeNotifierProvider or we can use MultiProvider instead of using multiple ChangeNotifierProvider, */
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => Products(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => Cart(),
+        ),
+      ],
       /* if the provider version in the dependencies is higher than 3, then use "create".*/
-      create: (ctx) => Products(),
+      //create: (ctx) => Products(),
       child: MaterialApp(
         title: 'MyShop',
         theme: ThemeData(

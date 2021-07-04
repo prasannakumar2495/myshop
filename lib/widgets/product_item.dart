@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myshop/providers/cart.dart';
 import 'package:myshop/providers/product.dart';
 import 'package:myshop/screens/product_detail_screen.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +25,10 @@ class ProductItem extends StatelessWidget {
     we are using Consumer, instead of provider.of method. 
     by using the Consumer, the widget will get all the updates.
     if the user want only sub widget to get the updates, the we use the provider.of , method and surround that sub-widget with Consumer instead of  the entire screen.*/
+    final cart = Provider.of<Cart>(
+      context,
+      listen: false,
+    );
     return Consumer<Product>(
       builder: (ctx, product, child) => ClipRRect(
         borderRadius: BorderRadius.circular(
@@ -66,7 +71,13 @@ class ProductItem extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             trailing: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                cart.addItem(
+                  product.id,
+                  product.price,
+                  product.title,
+                );
+              },
               icon: Icon(
                 Icons.shopping_cart,
               ),
