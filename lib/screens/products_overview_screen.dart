@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myshop/providers/cart.dart';
 import 'package:myshop/providers/products.dart';
+import 'package:myshop/screens/cart_screen.dart';
 import 'package:myshop/widgets/badge.dart';
 import 'package:provider/provider.dart';
 import '../widgets/products_grid.dart';
@@ -60,7 +61,11 @@ class ProductsOverviewScreen extends StatelessWidget {
               value: cart.itemCount.toString(),
             ),
             child: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).pushNamed(
+                  CartScreen.routeName,
+                );
+              },
               icon: Icon(
                 Icons.shopping_cart,
               ),
