@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:myshop/providers/cart.dart';
+import 'package:myshop/providers/orders.dart';
 import 'package:myshop/screens/cart_screen.dart';
+import 'package:myshop/screens/order_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'package:myshop/screens/products_overview_screen.dart';
@@ -27,6 +29,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => Cart(),
         ),
+        ChangeNotifierProvider.value(
+          value: Orders(),
+        ), /**all the above are same. we can use either of them to fetch data. */
       ],
       /* if the provider version in the dependencies is higher than 3, then use "create".*/
       //create: (ctx) => Products(),
@@ -45,6 +50,7 @@ class MyApp extends StatelessWidget {
         routes: {
           ProductDetailsScreen.routeName: (ctx) => ProductDetailsScreen(),
           CartScreen.routeName: (ctx) => CartScreen(),
+          OrdersScreen.routeName: (context) => OrdersScreen(),
         },
       ),
     );
