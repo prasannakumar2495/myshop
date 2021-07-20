@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:myshop/providers/product.dart';
 
 class EditProductScreen extends StatefulWidget {
   static const routeName = '/edit-product';
@@ -13,6 +14,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
   /* to have our own image controller */
   final _imageUrlController = TextEditingController();
   final _imageUrlFocusNode = FocusNode();
+  /** we mentioned the input data type as formstate, bcz we are trying to submit the data that has been entered in the form fields. */
+  final _form = GlobalKey<FormState>();
+  var _editedProduct = Product(
+    id: null,
+    title: '',
+    description: '',
+    price: 0,
+    imageUrl: '',
+  );
 
   @override
   void initState() {
@@ -42,6 +52,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
   }
 
+  void _saveForm() {
+    /** the save method is provided by default, to save the form widget. */
+    _form.currentState.save();
+    print(_editedProduct.title);
+    print(_editedProduct.price);
+    print(_editedProduct.description);
+    print(_editedProduct.imageUrl);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,6 +68,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
         title: Text(
           'Edit Product',
         ),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.save,
+            ),
+            onPressed: _saveForm,
+          ),
+        ],
       ),
       /* we are using Form instead of textediting controller, because using Form is lot more easy and efficient way. */
       body: Padding(
@@ -56,6 +83,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
           15,
         ),
         child: Form(
+          /** we can access the data that has been entered in the form widget with the help of GlobalKey. */
+          key: _form,
           child: ListView(
             children: <Widget>[
               TextFormField(
@@ -68,6 +97,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 onFieldSubmitted: (_) {
                   FocusScope.of(context).requestFocus(
                     _priceFocusNode,
+                  );
+                },
+                onSaved: (value) {
+                  _editedProduct = Product(
+                    id: null,
+                    title: value,
+                    description: _editedProduct.description,
+                    price: _editedProduct.price,
+                    imageUrl: _editedProduct.imageUrl,
                   );
                 },
               ),
@@ -85,6 +123,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     _discriptionFocusNode,
                   );
                 },
+                onSaved: (value) {
+                  _editedProduct = Product(
+                    id: null,
+                    title: _editedProduct.title,
+                    description: _editedProduct.description,
+                    price: double.parse(value),
+                    imageUrl: _editedProduct.imageUrl,
+                  );
+                },
               ),
               TextFormField(
                 decoration: InputDecoration(
@@ -94,8 +141,17 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 maxLines: 3,
                 /**the below will determine what the button in the keyboard bottom right should be. */
                 keyboardType: TextInputType.multiline,
-                /**the below will make sure the next focus will be as mentioned. */ focusNode:
-                    _discriptionFocusNode,
+                /**the below will make sure the next focus will be as mentioned. */
+                focusNode: _discriptionFocusNode,
+                onSaved: (value) {
+                  _editedProduct = Product(
+                    id: null,
+                    title: _editedProduct.title,
+                    description: value,
+                    price: _editedProduct.price,
+                    imageUrl: _editedProduct.imageUrl,
+                  );
+                },
               ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -133,6 +189,16 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       controller: _imageUrlController,
                       /** we have created the below to make the app know that, when ever this particular field looses the focus, it has to check the URL entered in the field and display it in the priscibed place. */
                       focusNode: _imageUrlFocusNode,
+                      onFieldSubmitted: (_) => _saveForm(),
+                      onSaved: (value) {
+                        _editedProduct = Product(
+                          id: null,
+                          title: _editedProduct.title,
+                          description: _editedProduct.description,
+                          price: _editedProduct.price,
+                          imageUrl: value,
+                        );
+                      },
                     ),
                   ),
                 ],
