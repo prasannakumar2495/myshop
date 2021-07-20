@@ -12,14 +12,34 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _discriptionFocusNode = FocusNode();
   /* to have our own image controller */
   final _imageUrlController = TextEditingController();
+  final _imageUrlFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    _imageUrlFocusNode.addListener(
+      _upadteImageURl,
+    );
+    super.initState();
+  }
 
   /* to avoid memory leak due to the focus nodes, we should always dispose focus after using them. */
   @override
   void dispose() {
+    _imageUrlFocusNode.removeListener(
+      _upadteImageURl,
+    );
     _priceFocusNode.dispose();
     _discriptionFocusNode.dispose();
     _imageUrlController.dispose();
+    _imageUrlFocusNode.dispose();
+
     super.dispose();
+  }
+
+  void _upadteImageURl() {
+    if (!_imageUrlFocusNode.hasFocus) {
+      setState(() {});
+    }
   }
 
   @override
@@ -78,6 +98,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     _discriptionFocusNode,
               ),
               Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   /** we will show the preview of the image, whose URL will be entered in the textformfield. */
                   Container(
@@ -93,15 +114,26 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         color: Colors.grey,
                       ),
                     ),
-                    child: Container(),
+                    child: _imageUrlController.text.isEmpty
+                        ? Text('Enter a URL')
+                        : FittedBox(
+                            child: Image.network(
+                              _imageUrlController.text,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
                   ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'Image URL',
+                  Expanded(
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'Image URL',
+                      ),
+                      keyboardType: TextInputType.url,
+                      textInputAction: TextInputAction.done,
+                      controller: _imageUrlController,
+                      /** we have created the below to make the app know that, when ever this particular field looses the focus, it has to check the URL entered in the field and display it in the priscibed place. */
+                      focusNode: _imageUrlFocusNode,
                     ),
-                    keyboardType: TextInputType.url,
-                    textInputAction: TextInputAction.done,
-                    controller: _imageUrlController,
                   ),
                 ],
               ),
