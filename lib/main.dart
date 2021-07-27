@@ -5,7 +5,6 @@ import 'package:myshop/screens/cart_screen.dart';
 import 'package:myshop/screens/edit_product_screen.dart';
 import 'package:myshop/screens/order_screen.dart';
 import 'package:myshop/screens/user_products_screen.dart';
-import 'package:myshop/widgets/user_product_item.dart';
 import 'package:provider/provider.dart';
 
 import 'package:myshop/screens/products_overview_screen.dart';

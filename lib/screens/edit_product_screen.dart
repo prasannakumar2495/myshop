@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:myshop/providers/product.dart';
+import 'package:myshop/providers/products.dart';
+import 'package:provider/provider.dart';
 
 class EditProductScreen extends StatefulWidget {
   static const routeName = '/edit-product';
@@ -14,7 +16,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
   /* to have our own image controller */
   final _imageUrlController = TextEditingController();
   final _imageUrlFocusNode = FocusNode();
-  /** we mentioned the input data type as formstate, bcz we are trying to submit the data that has been entered in the form fields. */
+
+  /// we mentioned the input data type as formstate, bcz we are trying to submit the data that has been entered in the form fields.
   final _form = GlobalKey<FormState>();
   var _editedProduct = Product(
     id: null,
@@ -23,6 +26,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
     price: 0,
     imageUrl: '',
   );
+  var _initValues = {
+    'title': '',
+    'description': '',
+    'price': '',
+    'imageUrl': '',
+  };
+  var _isInit = false;
 
   @override
   void initState() {
@@ -30,6 +40,28 @@ class _EditProductScreenState extends State<EditProductScreen> {
       _upadteImageURl,
     );
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      final productId = ModalRoute.of(context).settings.arguments as String;
+      if (productId != null) {
+        _editedProduct =
+            Provider.of<Products>(context, listen: false).findById(productId);
+        _initValues = {
+          'title': _editedProduct.title,
+          'description': _editedProduct.description,
+          'price': _editedProduct.price.toString(),
+          /** we cannot use the below as initial value, because we are already using controller to access imageUrl. */
+          // 'imageUrl': _editedProduct.imageUrl,
+          'imageUrl': '',
+        };
+        _imageUrlController.text = _editedProduct.imageUrl;
+      }
+    }
+    _isInit = false;
+    super.didChangeDependencies();
   }
 
   /* to avoid memory leak due to the focus nodes, we should always dispose focus after using them. */
@@ -53,12 +85,23 @@ class _EditProductScreenState extends State<EditProductScreen> {
   }
 
   void _saveForm() {
+    final isValid = _form.currentState.validate();
+    if (!isValid) {
+      return;
+    }
     /** the save method is provided by default, to save the form widget. */
     _form.currentState.save();
     print(_editedProduct.title);
     print(_editedProduct.price);
     print(_editedProduct.description);
     print(_editedProduct.imageUrl);
+    Provider.of<Products>(
+      context,
+      listen: false,
+    ).addProduct(
+      _editedProduct,
+    );
+    Navigator.of(context).pop();
   }
 
   @override
@@ -88,6 +131,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
           child: ListView(
             children: <Widget>[
               TextFormField(
+                initialValue: _initValues['title'],
                 decoration: InputDecoration(
                   labelText: 'Title',
                 ),
@@ -98,6 +142,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   FocusScope.of(context).requestFocus(
                     _priceFocusNode,
                   );
+                },
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Please provide a value.';
+                  }
+                  return null;
                 },
                 onSaved: (value) {
                   _editedProduct = Product(
@@ -110,6 +160,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 },
               ),
               TextFormField(
+                initialValue: _initValues['price'],
                 decoration: InputDecoration(
                   labelText: 'Price',
                 ),
@@ -123,6 +174,17 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     _discriptionFocusNode,
                   );
                 },
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Please enter a price.';
+                  }
+                  if (double.tryParse(value) == null) {
+                    return 'Please enter a valid number.';
+                  }
+                  if (double.tryParse(value) <= 0) {
+                    return 'Please enter a number greater than zero.';
+                  }
+                },
                 onSaved: (value) {
                   _editedProduct = Product(
                     id: null,
@@ -134,6 +196,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 },
               ),
               TextFormField(
+                initialValue: _initValues['description'],
                 decoration: InputDecoration(
                   labelText: 'Description',
                 ),
@@ -143,6 +206,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 keyboardType: TextInputType.multiline,
                 /**the below will make sure the next focus will be as mentioned. */
                 focusNode: _discriptionFocusNode,
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Please enter a description.';
+                  }
+                  if (value.length < 10) {
+                    return 'Descrition should be more than 10 characters.';
+                  }
+                },
                 onSaved: (value) {
                   _editedProduct = Product(
                     id: null,
@@ -190,6 +261,20 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       /** we have created the below to make the app know that, when ever this particular field looses the focus, it has to check the URL entered in the field and display it in the priscibed place. */
                       focusNode: _imageUrlFocusNode,
                       onFieldSubmitted: (_) => _saveForm(),
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Please enter an image URL.';
+                        }
+                        if (!value.startsWith('http') &&
+                            !value.startsWith('https')) {
+                          return 'Please enter a valid URL';
+                        }
+                        if (!value.endsWith('.png') &&
+                            !value.endsWith('.jpg') &&
+                            !value.endsWith('.jpeg')) {
+                          return 'Please enter a valid image URL.';
+                        }
+                      },
                       onSaved: (value) {
                         _editedProduct = Product(
                           id: null,
