@@ -32,7 +32,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     'price': '',
     'imageUrl': '',
   };
-  var _isInit = false;
+  var _isInit = true;
 
   @override
   void initState() {
@@ -91,16 +91,35 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
     /** the save method is provided by default, to save the form widget. */
     _form.currentState.save();
-    print(_editedProduct.title);
-    print(_editedProduct.price);
-    print(_editedProduct.description);
-    print(_editedProduct.imageUrl);
-    Provider.of<Products>(
-      context,
-      listen: false,
-    ).addProduct(
-      _editedProduct,
-    );
+    if (_editedProduct.id != null) {
+      /**
+       * this will only update the current product.
+       */
+      Provider.of<Products>(
+        context,
+        listen: false,
+      ).updateProduct(
+        _editedProduct.id,
+        _editedProduct,
+      );
+    } else {
+      /**
+       * this logic will come into play only when a new product is to be created.
+       */
+      Provider.of<Products>(
+        context,
+        listen: false,
+      ).addProduct(
+        _editedProduct,
+      );
+    }
+    /** 
+    * print(_editedProduct.title);
+    * print(_editedProduct.price);
+    * print(_editedProduct.description);
+    * print(_editedProduct.imageUrl); 
+    */
+
     Navigator.of(context).pop();
   }
 
@@ -151,7 +170,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 },
                 onSaved: (value) {
                   _editedProduct = Product(
-                    id: null,
+                    isFavorite: _editedProduct.isFavorite,
+                    id: _editedProduct.id,
                     title: value,
                     description: _editedProduct.description,
                     price: _editedProduct.price,
@@ -184,10 +204,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   if (double.tryParse(value) <= 0) {
                     return 'Please enter a number greater than zero.';
                   }
+                  return null;
                 },
                 onSaved: (value) {
                   _editedProduct = Product(
-                    id: null,
+                    isFavorite: _editedProduct.isFavorite,
+                    id: _editedProduct.id,
                     title: _editedProduct.title,
                     description: _editedProduct.description,
                     price: double.parse(value),
@@ -213,10 +235,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   if (value.length < 10) {
                     return 'Descrition should be more than 10 characters.';
                   }
+                  return null;
                 },
                 onSaved: (value) {
                   _editedProduct = Product(
-                    id: null,
+                    isFavorite: _editedProduct.isFavorite,
+                    id: _editedProduct.id,
                     title: _editedProduct.title,
                     description: value,
                     price: _editedProduct.price,
@@ -274,10 +298,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
                             !value.endsWith('.jpeg')) {
                           return 'Please enter a valid image URL.';
                         }
+                        return null;
                       },
                       onSaved: (value) {
                         _editedProduct = Product(
-                          id: null,
+                          isFavorite: _editedProduct.isFavorite,
+                          id: _editedProduct.id,
                           title: _editedProduct.title,
                           description: _editedProduct.description,
                           price: _editedProduct.price,
