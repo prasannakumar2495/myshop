@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'product.dart';
+import 'package:http/http.dart' as http;
 
 class Products with ChangeNotifier {
   List<Product> _items = [
@@ -59,6 +62,27 @@ class Products with ChangeNotifier {
   }
 
   void addProduct(Product product) {
+    /** it doesn't matter if the http request code is written first or at the last, as the server takes time to execute the code. but during this time, the application will not stop funtioning. */
+    const url =
+        'https://myshop-1f07e-default-rtdb.firebaseio.com/products.json';
+    /**
+     * we have added /products at the end of the url, so that the data base will create a  new folder naming it as products. we have also added .json at the end, which is a firebase mandatory to url.
+     */
+    http.post(
+      url,
+      /**
+       * to post data into server, the data should be converted into .json format. we are converting the data into .json format by using the convert import.
+       */
+      body: json.encode(
+        {
+          'title': product.title,
+          'description': product.description,
+          'imageUrl': product.imageUrl,
+          'price': product.price,
+          'isFavorite': product.isFavorite,
+        },
+      ),
+    );
     final newProduct = Product(
       id: DateTime.now().toString(),
       title: product.title,
