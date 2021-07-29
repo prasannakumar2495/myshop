@@ -63,12 +63,13 @@ class Products with ChangeNotifier {
 
   void addProduct(Product product) {
     /** it doesn't matter if the http request code is written first or at the last, as the server takes time to execute the code. but during this time, the application will not stop funtioning. */
-    const url =
-        'https://myshop-1f07e-default-rtdb.firebaseio.com/products.json';
+    final url = Uri.parse(
+        'https://myshop-1f07e-default-rtdb.firebaseio.com/products.json');
     /**
      * we have added /products at the end of the url, so that the data base will create a  new folder naming it as products. we have also added .json at the end, which is a firebase mandatory to url.
      */
-    http.post(
+    http
+        .post(
       url,
       /**
        * to post data into server, the data should be converted into .json format. we are converting the data into .json format by using the convert import.
@@ -82,15 +83,25 @@ class Products with ChangeNotifier {
           'isFavorite': product.isFavorite,
         },
       ),
-    );
-    final newProduct = Product(
-      id: DateTime.now().toString(),
-      title: product.title,
-      description: product.description,
-      price: product.price,
-      imageUrl: product.imageUrl,
-    );
-    _items.add(newProduct);
+    )
+        /**
+     * the below action will happen only after the posting of the data into the firebase is finished.
+     * the data below is now fetched from the firebase.
+     */
+        .then((response) {
+      /** this will print the unique ID that has been created by the firebase. */
+      print(json.encode(response.body));
+      final newProduct = Product(
+        //id: DateTime.now().toString(),
+        id: json.encode(response.body),
+        title: product.title,
+        description: product.description,
+        price: product.price,
+        imageUrl: product.imageUrl,
+      );
+      _items.add(newProduct);
+    });
+
     /** this is alternative way of adding the data into _items.
      * _items.insert(0, newProduct);
     */
