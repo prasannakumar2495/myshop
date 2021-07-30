@@ -61,14 +61,17 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
-  void addProduct(Product product) {
+/*
+ * we have converted the output type to Future, so that we can add the loading image while the http request is being sent to the webserver.
+ */
+  Future<void> addProduct(Product product) {
     /** it doesn't matter if the http request code is written first or at the last, as the server takes time to execute the code. but during this time, the application will not stop funtioning. */
     final url = Uri.parse(
         'https://myshop-1f07e-default-rtdb.firebaseio.com/products.json');
     /**
      * we have added /products at the end of the url, so that the data base will create a  new folder naming it as products. we have also added .json at the end, which is a firebase mandatory to url.
      */
-    http
+    return http
         .post(
       url,
       /**
@@ -100,6 +103,7 @@ class Products with ChangeNotifier {
         imageUrl: product.imageUrl,
       );
       _items.add(newProduct);
+      notifyListeners();
     });
 
     /** this is alternative way of adding the data into _items.
@@ -107,7 +111,6 @@ class Products with ChangeNotifier {
     */
 
     // the below will be used to notify all the listeners when there is a change.
-    notifyListeners();
   }
 
   void updateProduct(String id, Product newProduct) {
