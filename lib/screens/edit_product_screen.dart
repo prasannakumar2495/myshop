@@ -135,7 +135,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
     // Navigator.of(context).pop();
   }
 
-//https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Empty_book.jpg/640px-Empty_book.jpg
   @override
   Widget build(BuildContext context) {
     return Scaffold(
