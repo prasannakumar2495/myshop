@@ -91,20 +91,30 @@ class Products with ChangeNotifier {
      * the below action will happen only after the posting of the data into the firebase is finished.
      * the data below is now fetched from the firebase.
      */
-        .then((response) {
-      /** this will print the unique ID that has been created by the firebase. */
-      print(json.encode(response.body));
-      final newProduct = Product(
-        //id: DateTime.now().toString(),
-        id: json.encode(response.body),
-        title: product.title,
-        description: product.description,
-        price: product.price,
-        imageUrl: product.imageUrl,
-      );
-      _items.add(newProduct);
-      notifyListeners();
-    });
+        .then(
+      (response) {
+        /** this will print the unique ID that has been created by the firebase. */
+        print(json.encode(response.body));
+        final newProduct = Product(
+          //id: DateTime.now().toString(),
+          id: json.encode(response.body),
+          title: product.title,
+          description: product.description,
+          price: product.price,
+          imageUrl: product.imageUrl,
+        );
+        _items.add(newProduct);
+        notifyListeners();
+      },
+      /**
+       * in the below code we are going to catch any error after the "then" & "post" code is also execuded.
+       */
+    ).catchError(
+      (error) {
+        print(error);
+        throw (error);
+      },
+    );
 
     /** this is alternative way of adding the data into _items.
      * _items.insert(0, newProduct);
