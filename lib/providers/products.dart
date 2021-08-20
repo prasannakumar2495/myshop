@@ -61,60 +61,88 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> fetchAndSetProducts() async {
+    /**
+     * this method is used to fetch the products list in ther database to the application.
+     */
+    final url = Uri.parse(
+        'https://myshop-1f07e-default-rtdb.firebaseio.com/products.json');
+    http.get(url);
+  }
+
 /*
  * we have converted the output type to Future, so that we can add the loading image while the http request is being sent to the webserver.
  */
-  Future<void> addProduct(Product product) {
+  Future<void> addProduct(Product product) async {
     /** it doesn't matter if the http request code is written first or at the last, as the server takes time to execute the code. but during this time, the application will not stop funtioning. */
     final url = Uri.parse(
         'https://myshop-1f07e-default-rtdb.firebaseio.com/products.json');
     /**
      * we have added /products at the end of the url, so that the data base will create a  new folder naming it as products. we have also added .json at the end, which is a firebase mandatory to url.
      */
-    return http
-        .post(
-      url,
-      /**
+    try {
+      final response = await http.post(
+        url,
+        /**
        * to post data into server, the data should be converted into .json format. we are converting the data into .json format by using the convert import.
        */
-      body: json.encode(
-        {
-          'title': product.title,
-          'description': product.description,
-          'imageUrl': product.imageUrl,
-          'price': product.price,
-          'isFavorite': product.isFavorite,
-        },
-      ),
-    )
-        /**
+        body: json.encode(
+          {
+            'title': product.title,
+            'description': product.description,
+            'imageUrl': product.imageUrl,
+            'price': product.price,
+            'isFavorite': product.isFavorite,
+          },
+        ),
+      );
+      final newProduct = Product(
+        //id: DateTime.now().toString(),
+        id: json.encode(response.body),
+        title: product.title,
+        description: product.description,
+        price: product.price,
+        imageUrl: product.imageUrl,
+      );
+      _items.add(newProduct);
+      notifyListeners();
+    } catch (error) {
+      print(error);
+      throw (error);
+    }
+    /**
+     * the code below will execute only when the above has been executed, as we have implemented 'await' keyword.
+     */
+    /**
      * the below action will happen only after the posting of the data into the firebase is finished.
      * the data below is now fetched from the firebase.
-     */
+     * As we have added the "await" key word, there is no need of using the 'then' and 'catch'.
+    
         .then(
-      (response) {
-        /** this will print the unique ID that has been created by the firebase. */
-        print(json.encode(response.body));
-        final newProduct = Product(
-          //id: DateTime.now().toString(),
-          id: json.encode(response.body),
-          title: product.title,
-          description: product.description,
-          price: product.price,
-          imageUrl: product.imageUrl,
-        );
-        _items.add(newProduct);
-        notifyListeners();
-      },
-      /**
+      (response) { */
+    /** this will print the unique ID that has been created by the firebase. 
+
+    print(json.encode(response.body));
+    final newProduct = Product(
+      //id: DateTime.now().toString(),
+      id: json.encode(response.body),
+      title: product.title,
+      description: product.description,
+      price: product.price,
+      imageUrl: product.imageUrl,
+    );
+    _items.add(newProduct);
+    notifyListeners();*/
+    /**},
+      
        * in the below code we are going to catch any error after the "then" & "post" code is also execuded.
-       */
+       
     ).catchError(
       (error) {
         print(error);
         throw (error);
       },
-    );
+    );*/
 
     /** this is alternative way of adding the data into _items.
      * _items.insert(0, newProduct);

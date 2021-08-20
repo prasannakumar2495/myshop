@@ -85,7 +85,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
   }
 
-  void _saveForm() {
+  Future<void> _saveForm() async {
     final isValid = _form.currentState.validate();
     if (!isValid) {
       return;
@@ -109,41 +109,46 @@ class _EditProductScreenState extends State<EditProductScreen> {
         _isLoading = false;
       });
     } else {
-      /**
+      try {
+        await Provider.of<Products>(context, listen: false)
+            .addProduct(_editedProduct);
+      } catch (error) {
+        await showDialog<Null>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text('An error has occured!'),
+            content: Text("Something went wrong!"),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                },
+                child: Text('Okay'),
+              ),
+            ],
+          ),
+        );
+      } finally {
+        /**
+         * the code written in this block will be executed no matter what.
+         */
+        setState(
+          () {
+            _isLoading = false;
+          },
+        );
+        Navigator.of(context).pop();
+      }
+    }
+    /**
        * this logic will come into play only when a new product is to be created.
-       */
-      Provider.of<Products>(context, listen: false)
+       
+      await Provider.of<Products>(context, listen: false)
           .addProduct(_editedProduct)
           .catchError(
-        (error) {
-          /**HEre we are going to display the user what is the errthe screen. */
-          return showDialog<Null>(
-            context: context,
-            builder: (ctx) => AlertDialog(
-              title: Text('An error has occured!'),
-              content: Text("Something went wrong!"),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(ctx).pop();
-                  },
-                  child: Text('Okay'),
-                ),
-              ],
-            ),
-          );
-        },
-      ).then(
-        (_) {
-          setState(
-            () {
-              _isLoading = false;
-            },
-          );
-          Navigator.of(context).pop();
-        },
-      );
-    }
+        (error) {*/
+    /**HEre we are going to display the user what is the errthe screen. */
+
     /** 
     * print(_editedProduct.title);
     * print(_editedProduct.price);

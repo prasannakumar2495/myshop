@@ -13,10 +13,20 @@ enum FilterOptions {
   All,
 }
 
-class ProductsOverviewScreen extends StatelessWidget {
+class ProductsOverviewScreen extends StatefulWidget {
   /* we can also use statefull. 
   if we do it using provider, it is local state, but if we use statefull it is call app-state.
   there will be no impact on the performance, we can use any method. */
+  @override
+  _ProductsOverviewScreenState createState() => _ProductsOverviewScreenState();
+}
+
+class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final productsContainer = Provider.of<Products>(
