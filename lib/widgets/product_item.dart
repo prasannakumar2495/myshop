@@ -19,7 +19,8 @@ class ProductItem extends StatelessWidget {
     final product = Provider.of<Product>(
       context,
       listen: false,
-    ); //we don't add the listener here, bcz we want to listen to clicks on the favourite button.
+    );
+    //we don't add the listener here, bcz we want to listen to clicks on the favourite button.
     //Later in the course we added listen:false, bcz we are using Consumer.
 
     // return ClipRRect(

@@ -5,12 +5,17 @@ import 'package:provider/provider.dart';
 import 'product_item.dart';
 
 class ProductsGridView extends StatelessWidget {
-  const ProductsGridView({Key? key}) : super(key: key);
+  final bool showOnlyFavourites;
+  const ProductsGridView({
+    Key? key,
+    required this.showOnlyFavourites,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final productsData = Provider.of<Products>(context);
-    final products = productsData.items;
+    final products =
+        showOnlyFavourites ? productsData.favouriteItems : productsData.items;
     return GridView.builder(
       padding: const EdgeInsets.all(10),
       itemCount: products.length,
@@ -23,7 +28,7 @@ class ProductsGridView extends StatelessWidget {
       /**
       * using .value constructor is prefered, when we have any lists.
       * bcz, .create constructor will give errors when, the list is beyound screen size.
-      
+
       * when we are creating a new instance of an object, we should use create method.
       * when we are re-using the existing object, then we should use .value constructor.
       */
