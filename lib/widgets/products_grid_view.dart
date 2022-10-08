@@ -20,13 +20,21 @@ class ProductsGridView extends StatelessWidget {
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
       ),
-      itemBuilder: ((context, index) => ChangeNotifierProvider(
-            create: (context) => products[index],
-            child: ProductItem(
-              // id: products[index].id,
-              // title: products[index].title,
-              // imageUrl: products[index].imageUrl,
-            ),
+      /**
+      * using .value constructor is prefered, when we have any lists.
+      * bcz, .create constructor will give errors when, the list is beyound screen size.
+      
+      * when we are creating a new instance of an object, we should use create method.
+      * when we are re-using the existing object, then we should use .value constructor.
+      */
+      itemBuilder: ((context, index) => ChangeNotifierProvider.value(
+            //create: (context) => products[index],
+            value: products[index],
+            child: const ProductItem(
+                // id: products[index].id,
+                // title: products[index].title,
+                // imageUrl: products[index].imageUrl,
+                ),
           )),
     );
   }

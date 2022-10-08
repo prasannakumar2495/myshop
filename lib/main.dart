@@ -13,6 +13,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    /**
+     * when we are creating a new instance of an object, we should use create method.
+     * when we are re-using the existing object, then we should use .value constructor.
+     */
     return ChangeNotifierProvider(
       create: (context) => Products(),
       child: MaterialApp(
@@ -21,7 +25,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.purple)
               .copyWith(secondary: Colors.deepOrange),
         ),
-        home: ProductsOverViewScreen(),
+        home: const ProductsOverViewScreen(),
         routes: {
           ProductDetailScreen.routeName: (context) =>
               const ProductDetailScreen(),
