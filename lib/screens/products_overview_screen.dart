@@ -2,6 +2,7 @@ import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:myshop/providers/cart.dart';
 import 'package:myshop/screens/cart_screen.dart';
+import 'package:myshop/widgets/app_drawer.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/products_grid_view.dart';
@@ -69,6 +70,7 @@ class _ProductsOverViewScreenState extends State<ProductsOverViewScreen> {
           ),
         ],
       ),
+      drawer: const AppDrawer(),
       body: ProductsGridView(
         showOnlyFavourites: _showOnlyFavourites,
       ),
