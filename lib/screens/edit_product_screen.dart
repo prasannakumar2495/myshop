@@ -16,6 +16,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
     super.dispose();
   }
 
+  String imageUrlListener() {
+    var data = '';
+    setState(() {
+      data = _imageUrlController.text;
+    });
+    return data;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,12 +67,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         color: Colors.grey,
                       ),
                     ),
-                    child: _imageUrlController.text.isEmpty
-                        ? const Text('Enter a URL')
-                        : FittedBox(
+                    child: _imageUrlController.text.isNotEmpty
+                        ? FittedBox(
                             fit: BoxFit.cover,
                             child: Image.network(_imageUrlController.text),
-                          ),
+                          )
+                        : const Text('Enter a URL'),
                   ),
                   //https://cdn.pixabay.com/photo/2015/10/27/08/51/autumn-1008520__480.png
                   Expanded(
@@ -73,6 +81,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       keyboardType: TextInputType.url,
                       textInputAction: TextInputAction.done,
                       controller: _imageUrlController,
+                      onChanged: (value) {
+                        imageUrlListener();
+                        debugPrint(_imageUrlController.text);
+                      },
                     ),
                   ),
                 ],
