@@ -97,7 +97,7 @@ class ProductItem extends StatelessWidget {
             icon: const Icon(Icons.shopping_cart),
             onPressed: (() {
               cart.addItem(
-                product.id,
+                product.id!,
                 product.price,
                 product.title,
               );
@@ -112,7 +112,7 @@ class ProductItem extends StatelessWidget {
                   action: SnackBarAction(
                     label: 'UNDO',
                     onPressed: (() {
-                      cart.removeSingleItem(product.id);
+                      cart.removeSingleItem(product.id!);
                     }),
                   ),
                 ),
