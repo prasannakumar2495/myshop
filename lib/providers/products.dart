@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class Product with ChangeNotifier {
   final String? id;
@@ -17,8 +20,42 @@ class Product with ChangeNotifier {
     this.isFavorite = false,
   });
 
-  void toggleFavouriteStatus() {
+  void toggleFavouriteStatus(BuildContext context) async {
+    final favoriteUrl = Uri.parse(
+      'https://myshop-838c2-default-rtdb.firebaseio.com/products/$id.json',
+    );
+
     isFavorite = !isFavorite;
     notifyListeners();
+
+    await http
+        .patch(favoriteUrl,
+            body: json.encode({
+              'isFavorite': isFavorite,
+            }))
+        .then((response) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      if (response.statusCode >= 400) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error making the item as Favourite!'),
+          ),
+        );
+      } else {
+        if (isFavorite) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Item marked as Favourite!'),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Item removed as Favourite!'),
+            ),
+          );
+        }
+      }
+    });
   }
 }

@@ -1,6 +1,7 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:myshop/providers/cart.dart';
+import 'package:myshop/providers/products_provider.dart';
 import 'package:myshop/screens/cart_screen.dart';
 import 'package:myshop/widgets/app_drawer.dart';
 import 'package:provider/provider.dart';
@@ -21,6 +22,36 @@ class ProductsOverViewScreen extends StatefulWidget {
 
 class _ProductsOverViewScreenState extends State<ProductsOverViewScreen> {
   var _showOnlyFavourites = false;
+  //var _isInit = true;
+  var _isLoading = false;
+
+  @override
+  void initState() {
+    setState(() {
+      _isLoading = true;
+    });
+    Future.delayed(Duration.zero).then((value) =>
+        Provider.of<Products>(context, listen: false)
+            .fetchAndSetProducts()
+            .then(
+          (value) {
+            setState(() {
+              _isLoading = false;
+            });
+          },
+        ));
+    super.initState();
+  }
+//Both work the same way.
+  // @override
+  // void didChangeDependencies() {
+  //   if (_isInit) {
+  //     Provider.of<Products>(context).fetchAndSetProducts();
+  //   }
+  //   _isInit = false;
+  //   super.didChangeDependencies();
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,10 +101,14 @@ class _ProductsOverViewScreenState extends State<ProductsOverViewScreen> {
           ),
         ],
       ),
-      drawer: const AppDrawer(),
-      body: ProductsGridView(
-        showOnlyFavourites: _showOnlyFavourites,
-      ),
+      drawer: const AppDrawer(), //This is for side drawer.
+      body: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : ProductsGridView(
+              showOnlyFavourites: _showOnlyFavourites,
+            ),
     );
   }
 }

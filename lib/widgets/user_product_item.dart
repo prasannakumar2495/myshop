@@ -23,6 +23,7 @@ class UserProductItem extends StatelessWidget {
     return ListTile(
       title: Text(title),
       leading: CircleAvatar(
+        backgroundColor: Colors.white,
         backgroundImage: NetworkImage(imageUrl),
       ),
       trailing: SizedBox(
@@ -41,7 +42,7 @@ class UserProductItem extends StatelessWidget {
             ),
             IconButton(
               onPressed: (() {
-                productData.deleteProduct(id);
+                productData.deleteProduct(id, context);
               }),
               color: Theme.of(context).errorColor,
               icon: const Icon(Icons.delete),
