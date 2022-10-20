@@ -40,7 +40,6 @@ class Products with ChangeNotifier {
     // ),
   ];
 
-  var _showFavouritesOnly = false;
   final url = Uri.parse(
     'https://myshop-838c2-default-rtdb.firebaseio.com/products.json',
   );
