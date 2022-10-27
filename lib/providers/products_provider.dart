@@ -39,14 +39,10 @@ class Products with ChangeNotifier {
     //       'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
     // ),
   ];
-
-  final url = Uri.parse(
-    'https://myshop-838c2-default-rtdb.firebaseio.com/products.json',
-  );
-
   final String? authToken;
+  final String? userId;
 
-  Products(this.authToken, this._items);
+  Products(this.authToken, this._items, this.userId);
 
   List<Product> get items {
     // if (_showFavouritesOnly) {
@@ -81,9 +77,17 @@ class Products with ChangeNotifier {
     final url = Uri.parse(
       'https://myshop-838c2-default-rtdb.firebaseio.com/products.json?auth=$authToken',
     );
+    final favoriteUrl = Uri.parse(
+      'https://myshop-838c2-default-rtdb.firebaseio.com/userFavourites/$userId.json?auth=$authToken',
+    );
     try {
       final response = await http.get(url);
+      final favouriteResponse = await http.get(favoriteUrl);
+
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      final faouriteData =
+          json.decode(favouriteResponse.body) as Map<String, dynamic>;
+
       //debugPrint(extractedData.toString());
       final List<Product> loadedProducts = [];
       extractedData.forEach((key, value) {
@@ -94,7 +98,10 @@ class Products with ChangeNotifier {
             description: value['description'],
             price: value['price'],
             imageUrl: value['imageUrl'],
-            isFavorite: value['isFavorite'],
+            isFavorite: faouriteData == null
+                ? false
+                : faouriteData[key] ??
+                    false, //if the key is also null, then the last false will be used.
           ),
         );
         _items = loadedProducts;
@@ -105,12 +112,16 @@ class Products with ChangeNotifier {
     }
   }
 
-  //https://cdn.pixabay.com/photo/2015/10/27/08/51/autumn-1008520__480.png
-  //https://cdn.pixabay.com/photo/2015/10/01/17/17/car-967387__480.png
-  //https://cdn.pixabay.com/photo/2017/03/06/14/44/stary-2121647__480.png
-  //https://cdn.pixabay.com/photo/2017/05/20/13/08/horse-2328891__480.png
-  //https://cdn.pixabay.com/photo/2017/02/04/22/37/panther-2038656__480.png
+  /// https://cdn.pixabay.com/photo/2015/10/27/08/51/autumn-1008520__480.png
+  /// https://cdn.pixabay.com/photo/2015/10/01/17/17/car-967387__480.png
+  /// https://cdn.pixabay.com/photo/2017/03/06/14/44/stary-2121647__480.png
+  /// https://cdn.pixabay.com/photo/2017/05/20/13/08/horse-2328891__480.png
+  /// https://cdn.pixabay.com/photo/2017/02/04/22/37/panther-2038656__480.png
+
   Future<void> addProduct(Product product) async {
+    final url = Uri.parse(
+      'https://myshop-838c2-default-rtdb.firebaseio.com/products.json?auth=$authToken',
+    );
     try {
       final response = await http.post(
         url,
@@ -119,7 +130,6 @@ class Products with ChangeNotifier {
           'description': product.description,
           'imageUrl': product.imageUrl,
           'price': product.price,
-          'isFavorite': product.isFavorite,
         }),
       );
       //debugPrint(json.decode(response.body)['name']);
@@ -140,7 +150,7 @@ class Products with ChangeNotifier {
 
   Future<void> updateProduct(String id, Product newProduct) async {
     final updateUrl = Uri.parse(
-      'https://myshop-838c2-default-rtdb.firebaseio.com/products/$id.json',
+      'https://myshop-838c2-default-rtdb.firebaseio.com/products/$id.json?auth=$authToken',
     );
 
     final prodIndex = _items.indexWhere((element) => element.id == id);
@@ -163,7 +173,7 @@ class Products with ChangeNotifier {
 
   void deleteProduct(String id, BuildContext context) {
     final deleteUrl = Uri.parse(
-      'https://myshop-838c2-default-rtdb.firebaseio.com/products/$id.json',
+      'https://myshop-838c2-default-rtdb.firebaseio.com/products/$id.json?auth=$authToken',
     );
     //_items.removeWhere((element) => element.id == id);
     /**

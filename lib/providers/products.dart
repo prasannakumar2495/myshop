@@ -20,20 +20,16 @@ class Product with ChangeNotifier {
     this.isFavorite = false,
   });
 
-  void toggleFavouriteStatus(BuildContext context) async {
+  void toggleFavouriteStatus(
+      BuildContext context, String token, String userId) async {
     final favoriteUrl = Uri.parse(
-      'https://myshop-838c2-default-rtdb.firebaseio.com/products/$id.json',
+      'https://myshop-838c2-default-rtdb.firebaseio.com/userFavourites/$userId/$id.json?auth=$token',
     );
 
     isFavorite = !isFavorite;
     notifyListeners();
 
-    await http
-        .patch(favoriteUrl,
-            body: json.encode({
-              'isFavorite': isFavorite,
-            }))
-        .then((response) {
+    await http.put(favoriteUrl, body: json.encode(isFavorite)).then((response) {
       ScaffoldMessenger.of(context).clearSnackBars();
       if (response.statusCode >= 400) {
         ScaffoldMessenger.of(context).showSnackBar(
