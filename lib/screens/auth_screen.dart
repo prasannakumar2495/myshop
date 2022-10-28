@@ -160,7 +160,7 @@ class AuthCardState extends State<AuthCard> {
       } else if (error.toString().contains('WEAK_PASSWORD')) {
         errorMessage = 'This password is weak.';
       }
-      _showErrorDialog(errorMessage);
+      _showErrorDialog(error.toString());
     }
 
     setState(() {

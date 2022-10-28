@@ -73,9 +73,15 @@ class Products with ChangeNotifier {
     return _items.firstWhere((element) => element.id == id);
   }
 
-  Future<void> fetchAndSetProducts() async {
+  /// Parameters inside the square brackets are optional.
+  Future<void> fetchAndSetProducts([
+    bool filterByUser = false,
+  ]) async {
+    final filterString =
+        filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
+
     final url = Uri.parse(
-      'https://myshop-838c2-default-rtdb.firebaseio.com/products.json?auth=$authToken',
+      'https://myshop-838c2-default-rtdb.firebaseio.com/products.json?auth=$authToken&$filterString',
     );
     final favoriteUrl = Uri.parse(
       'https://myshop-838c2-default-rtdb.firebaseio.com/userFavourites/$userId.json?auth=$authToken',
@@ -85,8 +91,7 @@ class Products with ChangeNotifier {
       final favouriteResponse = await http.get(favoriteUrl);
 
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
-      final faouriteData =
-          json.decode(favouriteResponse.body) as Map<String, dynamic>;
+      final faouriteData = json.decode(favouriteResponse.body);
 
       //debugPrint(extractedData.toString());
       final List<Product> loadedProducts = [];
@@ -112,12 +117,6 @@ class Products with ChangeNotifier {
     }
   }
 
-  /// https://cdn.pixabay.com/photo/2015/10/27/08/51/autumn-1008520__480.png
-  /// https://cdn.pixabay.com/photo/2015/10/01/17/17/car-967387__480.png
-  /// https://cdn.pixabay.com/photo/2017/03/06/14/44/stary-2121647__480.png
-  /// https://cdn.pixabay.com/photo/2017/05/20/13/08/horse-2328891__480.png
-  /// https://cdn.pixabay.com/photo/2017/02/04/22/37/panther-2038656__480.png
-
   Future<void> addProduct(Product product) async {
     final url = Uri.parse(
       'https://myshop-838c2-default-rtdb.firebaseio.com/products.json?auth=$authToken',
@@ -130,6 +129,7 @@ class Products with ChangeNotifier {
           'description': product.description,
           'imageUrl': product.imageUrl,
           'price': product.price,
+          'creatorId': userId,
         }),
       );
       //debugPrint(json.decode(response.body)['name']);
