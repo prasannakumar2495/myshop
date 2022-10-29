@@ -12,6 +12,7 @@ class Auth with ChangeNotifier {
   Timer? _authTimer;
 
   bool get isAuth {
+    //notifyListeners();
     return token != null;
   }
 
@@ -28,7 +29,9 @@ class Auth with ChangeNotifier {
     return _userId;
   }
 
-  void logOut() {
+  void logOut() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.clear();
     _token = null;
     _userId = null;
     _expiryDate = null;
@@ -120,6 +123,7 @@ class Auth with ChangeNotifier {
         'expiryData': _expiryDate?.toIso8601String(),
       });
       prefs.setString('userData', userData);
+      debugPrint("Login $_expiryDate");
     } catch (error) {
       rethrow;
     }
@@ -128,14 +132,17 @@ class Auth with ChangeNotifier {
   Future<bool> tryAutoLogin() async {
     final prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey('userData')) {
+      debugPrint("No Login Details!");
       return false;
     }
-    final extractedUserData =
-        json.decode(prefs.getString('userData')!) as Map<String, Object>;
+    final extractedUserData = json.decode(prefs.getString('userData')!);
+
+    debugPrint('Extracted Data: ${extractedUserData['expiryData']}');
 
     final expiryDate =
-        DateTime.parse(extractedUserData['expiryDate'].toString());
-    if (expiryDate.isAfter(DateTime.now())) {
+        DateTime.parse(extractedUserData['expiryData'].toString());
+    if (expiryDate.isBefore(DateTime.now())) {
+      debugPrint('Expired Session!');
       return false;
     }
     _token = extractedUserData['token'].toString();
