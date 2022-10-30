@@ -21,11 +21,9 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      height:
-          _expanded ? min(widget.order.products.length * 20.0 + 145, 135) : 95,
+      duration: const Duration(milliseconds: 2000),
+      height: _expanded ? (widget.order.products.length * 20.0 + 120) : 80,
       child: Card(
-        margin: const EdgeInsets.all(10),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
@@ -50,10 +48,9 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
             //if (_expanded)
             AnimatedContainer(
               padding: const EdgeInsets.all(10),
-              duration: const Duration(milliseconds: 300),
-              height: _expanded
-                  ? min(widget.order.products.length * 20.0 + 40, 40)
-                  : 0,
+              duration: const Duration(milliseconds: 2000),
+              height:
+                  _expanded ? (widget.order.products.length * 20.0 + 40) : 0,
               child: ListView(
                 children: widget.order.products
                     .map(
@@ -68,7 +65,7 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                             ),
                           ),
                           Text(
-                            '\$${prod.quantity}x \$${prod.price}',
+                            '${prod.quantity} x \$${prod.price}',
                             style: const TextStyle(
                               fontSize: 18,
                               color: Colors.grey,
